@@ -14,7 +14,7 @@ module.exports = ({ bot }) => {
       const thread = await threads.findOpenThreadByUserId(member.id);
       if (thread != null) {
         await thread.postSystemMessage(
-          `***The user joined the ${guild.name} server.***`
+          `***L'utilisateur à rejoint ${guild.name}.***`
         );
       }
     });
@@ -34,7 +34,7 @@ module.exports = ({ bot }) => {
             leaveIgnoreIDs.splice(leaveIgnoreIDs.indexOf(member.id), 1);
           } else {
             await thread.postSystemMessage(
-              `***The user left the ${guild.name} server.***`
+              `***L'utilisateur à quité ${guild.name}.***`
             );
           }
         }
@@ -51,7 +51,7 @@ module.exports = ({ bot }) => {
       const thread = await threads.findOpenThreadByUserId(user.id);
       if (thread != null) {
         await thread.postSystemMessage(
-          `***The user was banned from the ${guild.name} server.***`
+          `***L'utilisateur à été BANNI de ${guild.name}.***`
         );
         leaveIgnoreIDs.push(user.id);
       }
@@ -67,7 +67,7 @@ module.exports = ({ bot }) => {
       const thread = await threads.findOpenThreadByUserId(user.id);
       if (thread != null) {
         await thread.postSystemMessage(
-          `***The user was unbanned from the ${guild.name} server.***`
+          `***L'utilisateur a été débanni de ${guild.name}.***`
         );
       }
     });

@@ -49,22 +49,22 @@ module.exports = ({ bot, knex, config, commands, hooks }) => {
       const logUrl = await getLogUrl(userThread);
       const formattedLogUrl = logUrl
         ? `<${addOptQueryStringToUrl(logUrl, args)}>`
-        : `View log with \`${config.prefix}log ${userThread.thread_number}\``
+        : `Afficher les logs avec \`${config.prefix}log ${userThread.thread_number}\``
       const formattedDate = moment.utc(userThread.created_at).format("MMM Do [at] HH:mm [UTC]");
       return `\`#${userThread.thread_number}\` \`${formattedDate}\`: ${formattedLogUrl}`;
     }));
 
     let message = isPaginated
-      ? `**Log files for <@${userId}>** (page **${page}/${maxPage}**, showing logs **${start + 1}-${end}/${totalUserThreads}**):`
-      : `**Log files for <@${userId}>:**`;
+      ? `**Logs pour <@${userId}>** (page **${page}/${maxPage}**, Logs **${start + 1}-${end}/${totalUserThreads}**):`
+      : `**Fichiers Logs pour <@${userId}>:**`;
 
     message += `\n${threadLines.join("\n")}`;
 
     if (isPaginated) {
-      message += "\nTo view more, add a page number to the end of the command";
+      message += "\nPour en voir plus, ajoutez un numéro de page à la fin de la commande";
     }
 
-    if (threadLines.length === 0) message = `**There are no log files for <@${userId}>**`;
+    if (threadLines.length === 0) message = `**Il n'y a pas de logs pour <@${userId}>**`;
     
     // Send the list of logs in chunks of 15 lines per message
     const lines = message.split("\n");
@@ -92,22 +92,22 @@ module.exports = ({ bot, knex, config, commands, hooks }) => {
 
     const logUrl = await getLogUrl(thread);
     if (logUrl) {
-      channel.createMessage(`Open the following link to view the log for thread #${thread.thread_number}:\n<${addOptQueryStringToUrl(logUrl, args)}>`);
+      channel.createMessage(`Ouvrez le lien suivant pour afficher le logs du ticket #${thread.thread_number}:\n<${addOptQueryStringToUrl(logUrl, args)}>`);
       return;
     }
 
     const logFile = await getLogFile(thread);
     if (logFile) {
-      channel.createMessage(`Download the following file to view the log for thread #${thread.thread_number}:`, logFile);
+      channel.createMessage(`Téléchargez le fichier suivant pour afficher les logs du ticket #${thread.thread_number}:`, logFile);
       return;
     }
 
     if (thread.status === THREAD_STATUS.OPEN) {
-      channel.createMessage(`This thread's logs are not currently available, but it's open at <#${thread.channel_id}>`);
+      channel.createMessage(`Les logs de ce ticket ne sont pas disponibles actuellement, mais il est ouvert à <#${thread.channel_id}>`);
       return;
     }
 
-    channel.createMessage("This thread's logs are not currently available");
+    channel.createMessage("Les logq de ce ticket ne sont pas disponibles actuellement");
   };
 
   const logCmdOptions = [

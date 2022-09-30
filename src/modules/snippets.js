@@ -84,19 +84,19 @@ module.exports = ({ bot, knex, config, commands }) => {
     if (snippet) {
       if (args.text) {
         // If the snippet exists and we're trying to create a new one, inform the user the snippet already exists
-        utils.postSystemMessageWithFallback(msg.channel, thread, `Snippet "${args.trigger}" already exists! You can edit or delete it with ${config.prefix}edit_snippet and ${config.prefix}delete_snippet respectively.`);
+        utils.postSystemMessageWithFallback(msg.channel, thread, `Snippet "${args.trigger}" existe déjà! Vous pouvez le modifier ou le supprimer avec ${config.prefix}edit_snippet et ${config.prefix}delete_snippet respectivement.`);
       } else {
         // If the snippet exists and we're NOT trying to create a new one, show info about the existing snippet
-        utils.postSystemMessageWithFallback(msg.channel, thread, `\`${config.snippetPrefix}${args.trigger}\` replies with: \`\`\`\n${utils.disableCodeBlocks(snippet.body)}\`\`\``);
+        utils.postSystemMessageWithFallback(msg.channel, thread, `\`${config.snippetPrefix}${args.trigger}\` répond avec: \`\`\`\n${utils.disableCodeBlocks(snippet.body)}\`\`\``);
       }
     } else {
       if (args.text) {
         // If the snippet doesn't exist and the user wants to create it, create it
         await snippets.add(args.trigger, args.text, msg.author.id);
-        utils.postSystemMessageWithFallback(msg.channel, thread, `Snippet "${args.trigger}" created!`);
+        utils.postSystemMessageWithFallback(msg.channel, thread, `Snippet "${args.trigger}" créé!`);
       } else {
         // If the snippet doesn't exist and the user isn't trying to create it, inform them how to create it
-        utils.postSystemMessageWithFallback(msg.channel, thread, `Snippet "${args.trigger}" doesn't exist! You can create it with \`${config.prefix}snippet ${args.trigger} text\``);
+        utils.postSystemMessageWithFallback(msg.channel, thread, `Snippet "${args.trigger}" n'existe pas ! Vous pouvez le créer avec \`${config.prefix}snippet ${args.trigger} text\``);
       }
     }
   }, {
@@ -106,12 +106,12 @@ module.exports = ({ bot, knex, config, commands }) => {
   commands.addInboxServerCommand("delete_snippet", "<trigger>", async (msg, args, thread) => {
     const snippet = await snippets.get(args.trigger);
     if (! snippet) {
-      utils.postSystemMessageWithFallback(msg.channel, thread, `Snippet "${args.trigger}" doesn't exist!`);
+      utils.postSystemMessageWithFallback(msg.channel, thread, `Snippet "${args.trigger}" n'existe pas !`);
       return;
     }
 
     await snippets.del(args.trigger);
-    utils.postSystemMessageWithFallback(msg.channel, thread, `Snippet "${args.trigger}" deleted!`);
+    utils.postSystemMessageWithFallback(msg.channel, thread, `Snippet "${args.trigger}" supprimé !`);
   }, {
     aliases: ["ds"]
   });
@@ -119,14 +119,14 @@ module.exports = ({ bot, knex, config, commands }) => {
   commands.addInboxServerCommand("edit_snippet", "<trigger> <text$>", async (msg, args, thread) => {
     const snippet = await snippets.get(args.trigger);
     if (! snippet) {
-      utils.postSystemMessageWithFallback(msg.channel, thread, `Snippet "${args.trigger}" doesn't exist!`);
+      utils.postSystemMessageWithFallback(msg.channel, thread, `Snippet "${args.trigger}" n'existe pas !`);
       return;
     }
 
     await snippets.del(args.trigger);
     await snippets.add(args.trigger, args.text, msg.author.id);
 
-    utils.postSystemMessageWithFallback(msg.channel, thread, `Snippet "${args.trigger}" edited!`);
+    utils.postSystemMessageWithFallback(msg.channel, thread, `Snippet "${args.trigger}" édité !`);
   }, {
     aliases: ["es"]
   });
@@ -136,7 +136,7 @@ module.exports = ({ bot, knex, config, commands }) => {
     const triggers = allSnippets.map(s => s.trigger);
     triggers.sort();
 
-    utils.postSystemMessageWithFallback(msg.channel, thread, `Available snippets (prefix ${config.snippetPrefix}):\n${triggers.join(", ")}`);
+    utils.postSystemMessageWithFallback(msg.channel, thread, `Snippets disponible (prefix ${config.snippetPrefix}):\n${triggers.join(", ")}`);
   }, {
     aliases: ["s"]
   });

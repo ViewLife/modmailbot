@@ -42,7 +42,7 @@ module.exports = ({ bot, knex, config, commands }) => {
     });
 
     if (containsRankings[0][1] === 0) {
-      thread.postSystemMessage("No matching category");
+      thread.postSystemMessage("Aucune catégorie correspondante");
       return;
     }
 
@@ -53,7 +53,7 @@ module.exports = ({ bot, knex, config, commands }) => {
         parentID: targetCategory.id
       });
     } catch (e) {
-      thread.postSystemMessage(`Failed to move thread: ${e.message}`);
+      thread.postSystemMessage(`Échec du déplacement du ticket: ${e.message}`);
       return;
     }
 
@@ -73,11 +73,11 @@ module.exports = ({ bot, knex, config, commands }) => {
           permission_overwrites: newPerms
         });
       } catch (e) {
-        thread.postSystemMessage(`Thread moved to ${targetCategory.name.toUpperCase()}, but failed to sync permissions: ${e.message}`);
+        thread.postSystemMessage(`Ticket déplacé vers ${targetCategory.name.toUpperCase()}, mais n'a pas réussi à synchroniser les autorisations: ${e.message}`);
         return;
       }
     }
 
-    thread.postSystemMessage(`Thread moved to ${targetCategory.name.toUpperCase()}`);
+    thread.postSystemMessage(`Ticket déplacé vers ${targetCategory.name.toUpperCase()}`);
   });
 };

@@ -13,7 +13,7 @@ module.exports = ({ bot, knex, config, commands }) => {
     for (const thread of threadsToBeSuspended) {
       if (thread.status === THREAD_STATUS.OPEN) {
         await thread.suspend();
-        await thread.postSystemMessage(`**Thread suspended** as scheduled by ${thread.scheduled_suspend_name}. This thread will act as closed until unsuspended with \`!unsuspend\``);
+        await thread.postSystemMessage(`**Ticket Suspendu** par ${thread.scheduled_suspend_name}. Ce ticket agira comme fermé jusqu'à ce qu'il soit résilié avec \`!unsuspend\``);
       }
     }
   }
@@ -34,50 +34,50 @@ module.exports = ({ bot, knex, config, commands }) => {
     // Cancel timed suspend
     if (thread.scheduled_suspend_at) {
       await thread.cancelScheduledSuspend();
-      thread.postSystemMessage("Cancelled scheduled suspension");
+      thread.postSystemMessage("Suspension programmée annulée");
     } else {
-      thread.postSystemMessage("Thread is not scheduled to be suspended");
+      thread.postSystemMessage("Le ticket n'est pas programmé pour être suspendu");
     }
   });
 
   commands.addInboxThreadCommand("suspend", "[delay:delay]", async (msg, args, thread) => {
     if (thread.status === THREAD_STATUS.SUSPENDED) {
-      thread.postSystemMessage("Thread is already suspended.");
+      thread.postSystemMessage("Le ticket est déjà suspendu.");
       return;
     }
     if (args.delay) {
       const suspendAt = moment.utc().add(args.delay, "ms");
       await thread.scheduleSuspend(suspendAt.format("YYYY-MM-DD HH:mm:ss"), msg.author);
 
-      thread.postSystemMessage(`Thread will be suspended in ${utils.humanizeDelay(args.delay)}. Use \`${config.prefix}suspend cancel\` to cancel.`);
+      thread.postSystemMessage(`Le ticket sera suspendu dans ${utils.humanizeDelay(args.delay)}. Utilisez \`${config.prefix}suspend cancel\` pour annuler.`);
 
       return;
     }
 
     await thread.suspend();
-    thread.postSystemMessage("**Thread suspended!** This thread will act as closed until unsuspended with `!unsuspend`");
+    thread.postSystemMessage("**Ticket suspendu !** Ce Ticket agira comme fermé jusqu'à ce qu'il soit résilié avec `!unsuspend`");
   }, { allowSuspended: true });
 
   commands.addInboxServerCommand("unsuspend", [], async (msg, args, thread) => {
     if (thread) {
-      thread.postSystemMessage("Thread is not suspended");
+      thread.postSystemMessage("Le ticket n'est pas suspendu");
       return;
     }
 
     thread = await threads.findSuspendedThreadByChannelId(msg.channel.id);
     if (! thread) {
       const channel = await getOrFetchChannel(bot, msg.channel.id);
-      channel.createMessage("Not in a thread");
+      channel.createMessage("Pas dans un ticket");
       return;
     }
 
     const otherOpenThread = await threads.findOpenThreadByUserId(thread.user_id);
     if (otherOpenThread) {
-      thread.postSystemMessage(`Cannot unsuspend; there is another open thread with this user: <#${otherOpenThread.channel_id}>`);
+      thread.postSystemMessage(`Impossible d'annuler la suspension; il y a un autre ticket ouvert avec cet utilisateur: <#${otherOpenThread.channel_id}>`);
       return;
     }
 
     await thread.unsuspend();
-    thread.postSystemMessage("**Thread unsuspended!**");
+    thread.postSystemMessage("**Ticket non suspendu !**");
   });
 };

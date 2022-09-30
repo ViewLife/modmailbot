@@ -12,7 +12,7 @@ module.exports = ({ bot, knex, config, commands }) => {
     for (const userId of expiredBlocks) {
       await blocked.unblock(userId);
       logChannel.createMessage({
-        content: `Block of <@!${userId}> (id \`${userId}\`) expired`,
+        content: `Le Bloquage de <@!${userId}> (id \`${userId}\`) à expiré`,
         allowedMentions: {
           users: [userId],
         },
@@ -40,7 +40,7 @@ module.exports = ({ bot, knex, config, commands }) => {
 
     const isBlocked = await blocked.isBlocked(userIdToBlock);
     if (isBlocked) {
-      channel.createMessage("User is already blocked");
+      channel.createMessage("L'utilisateur est déjà bloqué");
       return;
     }
 
@@ -53,7 +53,7 @@ module.exports = ({ bot, knex, config, commands }) => {
 
     if (expiresAt) {
       const humanized = humanizeDuration(args.blockTime, { largest: 2, round: true });
-      msg.channel.createMessage(`Blocked <@${userIdToBlock}> (id \`${userIdToBlock}\`) from modmail for ${humanized}`);
+      msg.channel.createMessage(`Bloquée <@${userIdToBlock}> (id \`${userIdToBlock}\`) de modmail pour ${humanized}`);
 
       const timedBlockMessage = config.timedBlockMessage || config.blockMessage;
       if (timedBlockMessage) {
@@ -64,7 +64,7 @@ module.exports = ({ bot, knex, config, commands }) => {
         dmChannel.createMessage(formatted).catch(utils.noop);
       }
     } else {
-      msg.channel.createMessage(`Blocked <@${userIdToBlock}> (id \`${userIdToBlock}\`) from modmail indefinitely`);
+      msg.channel.createMessage(`Bloquée <@${userIdToBlock}> (id \`${userIdToBlock}\`) indéfiniment`);
 
       if (config.blockMessage != null) {
         const dmChannel = await user.getDMChannel();
@@ -82,7 +82,7 @@ module.exports = ({ bot, knex, config, commands }) => {
 
     const isBlocked = await blocked.isBlocked(userIdToUnblock);
     if (! isBlocked) {
-      msg.channel.createMessage("User is not blocked");
+      msg.channel.createMessage("L'utilisateur n'est pas bloqué");
       return;
     }
 
@@ -94,7 +94,7 @@ module.exports = ({ bot, knex, config, commands }) => {
     if (unblockAt) {
       const humanized = humanizeDuration(args.unblockDelay, { largest: 2, round: true });
       await blocked.updateExpiryTime(userIdToUnblock, unblockAt);
-      msg.channel.createMessage(`Scheduled <@${userIdToUnblock}> (id \`${userIdToUnblock}\`) to be unblocked in ${humanized}`);
+      msg.channel.createMessage(`Programmé <@${userIdToUnblock}> (id \`${userIdToUnblock}\`) être débloqué dans ${humanized}`);
 
       const timedUnblockMessage = config.timedUnblockMessage || config.unblockMessage;
       if (timedUnblockMessage) {
@@ -106,7 +106,7 @@ module.exports = ({ bot, knex, config, commands }) => {
       }
     } else {
       await blocked.unblock(userIdToUnblock);
-      msg.channel.createMessage(`Unblocked <@${userIdToUnblock}> (id ${userIdToUnblock}) from modmail`);
+      msg.channel.createMessage(`Débloqué <@${userIdToUnblock}> (id ${userIdToUnblock}).`);
 
       if (config.unblockMessage) {
         const dmChannel = await user.getDMChannel();
@@ -126,18 +126,18 @@ module.exports = ({ bot, knex, config, commands }) => {
     if (blockStatus.isBlocked) {
       if (blockStatus.expiresAt) {
         msg.channel.createMessage({
-          content: `<@!${userIdToCheck}> (id \`${userIdToCheck}\`) is blocked until ${blockStatus.expiresAt} (UTC)`,
+          content: `<@!${userIdToCheck}> (id \`${userIdToCheck}\`) est bloqué jusqu'à ${blockStatus.expiresAt} (UTC)`,
           allowedMentions: { users: [userIdToCheck] },
         });
       } else {
         msg.channel.createMessage({
-          content: `<@!${userIdToCheck}> (id \`${userIdToCheck}\`) is blocked indefinitely`,
+          content: `<@!${userIdToCheck}> (id \`${userIdToCheck}\`) est bloqué indéfiniment`,
           allowedMentions: { users: [userIdToCheck] },
         });
       }
     } else {
       msg.channel.createMessage({
-        content: `<@!${userIdToCheck}> (id \`${userIdToCheck}\`) is NOT blocked`,
+        content: `<@!${userIdToCheck}> (id \`${userIdToCheck}\`) n'est PAS bloqué`,
         allowedMentions: { users: [userIdToCheck] },
       });
     }

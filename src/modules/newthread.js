@@ -6,18 +6,18 @@ module.exports = ({ bot, knex, config, commands }) => {
   commands.addInboxServerCommand("newthread", "<userId:userId>", async (msg, args, thread) => {
     const user = bot.users.get(args.userId) || await bot.getRESTUser(args.userId).catch(() => null);
     if (! user) {
-      utils.postSystemMessageWithFallback(msg.channel, thread, "User not found!");
+      utils.postSystemMessageWithFallback(msg.channel, thread, "Utilisateur non trouvé!");
       return;
     }
 
     if (user.bot) {
-      utils.postSystemMessageWithFallback(msg.channel, thread, "Can't create a thread for a bot");
+      utils.postSystemMessageWithFallback(msg.channel, thread, "Impossible de créer un fil pour un bot");
       return;
     }
 
     const existingThread = await threads.findOpenThreadByUserId(user.id);
     if (existingThread) {
-      utils.postSystemMessageWithFallback(msg.channel, thread, `Cannot create a new thread; there is another open thread with this user: <#${existingThread.channel_id}>`);
+      utils.postSystemMessageWithFallback(msg.channel, thread, `Impossible de créer un nouveau ticket, il y a un autre ticket ouvert avec cet utilisateur: <#${existingThread.channel_id}>`);
       return;
     }
 
@@ -28,9 +28,9 @@ module.exports = ({ bot, knex, config, commands }) => {
       source: "command",
     });
 
-    createdThread.postSystemMessage(`Thread was opened by ${msg.author.username}#${msg.author.discriminator}`);
+    createdThread.postSystemMessage(`Le ticket a été ouvert par ${msg.author.username}#${msg.author.discriminator}`);
 
     const channel = await getOrFetchChannel(bot, msg.channel.id);
-    channel.createMessage(`Thread opened: <#${createdThread.channel_id}>`);
+    channel.createMessage(`Ticket ouvert: <#${createdThread.channel_id}>`);
   });
 };

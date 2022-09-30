@@ -30,10 +30,10 @@ module.exports = ({ bot, knex, config, commands }) => {
       }
     });
 
-    let amounts = `**${fromUserMessages.length}** message${fromUserMessages.length >= 2 ? "s" : ""} from the user`;
+    let amounts = `**${fromUserMessages.length}** message${fromUserMessages.length >= 2 ? "s" : ""} venant de l'utilisateur`;
 
-    amounts = `${amounts}, **${toUserMessages.length}** message${toUserMessages.length >= 2 ? "s" : ""} to the user`;
-    amounts = `${amounts} and **${chatMessages.length}** internal chat message${toUserMessages.length >= 2 ? "s" : ""}.`;
+    amounts = `${amounts}, **${toUserMessages.length}** message${toUserMessages.length >= 2 ? "s" : ""} envoyé à l'utilisateur`;
+    amounts = `${amounts} et **${chatMessages.length}** message${toUserMessages.length >= 2 ? "s" : ""}. de discution interne`;
 
     return amounts;
   }
@@ -77,7 +77,7 @@ module.exports = ({ bot, knex, config, commands }) => {
 
       await thread.close(false, thread.scheduled_close_silent);
 
-      await sendCloseNotification(thread, `Modmail thread #${thread.thread_number} with ${thread.user_name} (${thread.user_id}) was closed as scheduled by ${thread.scheduled_close_name}`);
+      await sendCloseNotification(thread, `Ticket #${thread.thread_number} avec ${thread.user_name} (${thread.user_id}) à été fermé par ${thread.scheduled_close_name}`);
     }
   }
 
@@ -112,11 +112,11 @@ module.exports = ({ bot, knex, config, commands }) => {
       // We need to add this operation to the message queue so we don't get a race condition
       // between showing the close command in the thread and closing the thread
       await messageQueue.add(async () => {
-        thread.postSystemMessage("Thread closed by user, closing...");
+        thread.postSystemMessage("Ticket fermé par l'utilisateur, fermeture...");
         suppressSystemMessages = true;
       });
 
-      closedBy = "the user";
+      closedBy = "l'Utilisateur";
     } else {
       // A staff member is closing the thread
       if (! await utils.messageIsOnInboxServer(bot, msg)) return;
@@ -131,7 +131,7 @@ module.exports = ({ bot, knex, config, commands }) => {
         // Cancel timed close
         if (thread.scheduled_close_at) {
           await thread.cancelScheduledClose();
-          thread.postSystemMessage("Cancelled scheduled closing");
+          thread.postSystemMessage("Fermeture programmée annulée");
         }
 
         return;
@@ -147,7 +147,7 @@ module.exports = ({ bot, knex, config, commands }) => {
       if (delayStringArg) {
         const delay = utils.convertDelayStringToMS(delayStringArg);
         if (delay === 0 || delay === null) {
-          thread.postSystemMessage("Invalid delay specified. Format: \"1h30m\"");
+          thread.postSystemMessage("Délai non valide spécifié. Format: \"1h30m\"");
           return;
         }
 
@@ -156,9 +156,9 @@ module.exports = ({ bot, knex, config, commands }) => {
 
         let response;
         if (silentClose) {
-          response = `Thread is now scheduled to be closed silently in ${utils.humanizeDelay(delay)}. Use \`${config.prefix}close cancel\` to cancel.`;
+          response = `Le ticket est maintenant programmé pour être fermé silencieusement dans ${utils.humanizeDelay(delay)}. Utilisez \`${config.prefix}close cancel\` pour annuler.`;
         } else {
-          response = `Thread is now scheduled to be closed in ${utils.humanizeDelay(delay)}. Use \`${config.prefix}close cancel\` to cancel.`;
+          response = `Le ticket est maintenant programmé pour être fermé dans ${utils.humanizeDelay(delay)}. Utilisez \`${config.prefix}close cancel\` pour annuler.`;
         }
 
         thread.postSystemMessage(response);
@@ -178,7 +178,7 @@ module.exports = ({ bot, knex, config, commands }) => {
 
     await thread.close(suppressSystemMessages, silentClose);
 
-    await sendCloseNotification(thread, `Modmail thread #${thread.thread_number} with ${thread.user_name} (${thread.user_id}) was closed by ${closedBy}`);
+    await sendCloseNotification(thread, `Ticket #${thread.thread_number} avec ${thread.user_name} (${thread.user_id}) a été fermé par ${closedBy}`);
   }, {
     options: [
       { name: "silent", shortcut: "s", isSwitch: true },
@@ -194,7 +194,7 @@ module.exports = ({ bot, knex, config, commands }) => {
     const thread = await threads.findOpenThreadByChannelId(channel.id);
     if (! thread) return;
 
-    console.log(`[INFO] Auto-closing thread with ${thread.user_name} because the channel was deleted`);
+    console.log(`[INFO] Ticket à fermeture automatique avec ${thread.user_name} parce que le channel a été supprimée`);
     if (config.closeMessage) {
       const closeMessage = utils.readMultilineConfigValue(config.closeMessage);
       await thread.sendSystemMessageToUser(closeMessage).catch(() => {});
@@ -202,6 +202,6 @@ module.exports = ({ bot, knex, config, commands }) => {
 
     await thread.close(true);
 
-    await sendCloseNotification(thread, `Modmail thread #${thread.thread_number} with ${thread.user_name} (${thread.user_id}) was closed automatically because the channel was deleted`);
+    await sendCloseNotification(thread, `Le Ticket #${thread.thread_number} avec ${thread.user_name} (${thread.user_id}) a été fermée automatiquement car le cahnnel a été supprimée`);
   });
 };
